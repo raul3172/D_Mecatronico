@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<robot name="DOF_3" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <link name="base_footprint"/>
+
+  <joint name="base_joint" type="fixed">
+    <parent link="base_footprint"/>
+    <child link="base_link"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <link name="base_link">
+    <inertial>
+      <origin xyz="-0.005261 -0.993068 -0.044685" rpy="0 0 0" />
+      <mass value="0.028838" />
+      <inertia ixx="7.87e-06" ixy="8.64e-08" ixz="-1.16e-09" iyy="6.89e-06" iyz="-3.16e-08" izz="8.13e-06" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://arm_description/meshes/base_link.STL" />
+      </geometry>
+      <material name="azul">
+        <color rgba="0.79 0.81 0.93 1" />
+      </material>
+    </visual>
+  </link>
+
+  <link name="caja_rotacion">
+    <visual>
+      <geometry>
+        <mesh filename="package://arm_description/meshes/caja_rotacion.STL" />
+      </geometry>
+    </visual>
+  </link>
+
+  <joint name="caja_360" type="revolute">
+    <origin xyz="-0.006115 -0.99257 -0.014386" rpy="-0.02588 0.014561 -3.1005" />
+    <parent link="base_link" />
+    <child link="caja_rotacion" />
+    <axis xyz="0 0 1" /> 
+    <limit lower="-3.1415" upper="3.1415" effort="2.0" velocity="3.14" />
+  </joint>
+
+  <link name="motor_izq">
+    <visual>
+      <geometry>
+        <mesh filename="package://arm_description/meshes/motor_izq.STL" />
+      </geometry>
+    </visual>
+  </link>
+
+  <joint name="m_izq" type="revolute">
+    <origin xyz="-0.0135 -0.0174 0.02325" rpy="3.1416 0.66489 3.1416" />
+    <parent link="caja_rotacion" />
+    <child link="motor_izq" />
+    <axis xyz="0 1 0" />
+    <limit lower="-1.57" upper="1.57" effort="1.5" velocity="3.14" />
+  </joint>
+
+  <link name="griper">
+    <visual>
+      <geometry>
+        <mesh filename="package://arm_description/meshes/griper.STL" />
+      </geometry>
+    </visual>
+  </link>
+
+  <joint name="griper_join" type="revolute">
+    <origin xyz="0.06136 0 -0.10074" rpy="0 0.65467 0" />
+    <parent link="motor_izq" />
+    <child link="griper" />
+    <axis xyz="0 1 0" />
+    <limit lower="-1.57" upper="1.57" effort="0.5" velocity="3.14" />
+    <mimic joint="m_izq" multiplier="1.0" offset="0.0" />
+  </joint>
+
+  <link name="motor_derecho">
+    <visual>
+      <geometry>
+        <mesh filename="package://arm_description/meshes/motor_derecho.STL" />
+      </geometry>
+    </visual>
+  </link>
+
+  <joint name="mot_der" type="revolute">
+    <origin xyz="-0.0155 0.0174 0.02675" rpy="0 -0.66489 3.1416" />
+    <parent link="caja_rotacion" />
+    <child link="motor_derecho" />
+    <axis xyz="0 1 0" /> 
+    <limit lower="-1.57" upper="1.57" effort="1.5" velocity="3.14" />
+  </joint>
+
+  <link name="mecanismo">
+    <visual>
+      <geometry>
+        <mesh filename="package://arm_description/meshes/mecanismo.STL" />
+      </geometry>
+    </visual>
+  </link>
+
+  <joint name="sop_meca" type="revolute">
+    <origin xyz="0.058271 0 0.071424" rpy="1.5708 0.67834 0" />
+    <parent link="motor_derecho" />
+    <child link="mecanismo" />
+    <axis xyz="0 0 1" />
+    <limit lower="-1.57" upper="1.57" effort="1.5" velocity="3.14" />
+    <mimic joint="mot_der" multiplier="1.0" offset="0.0" />
+  </joint>
+
+  <link name="barra_mecanismo">
+    <visual>
+      <geometry>
+        <mesh filename="package://arm_description/meshes/barra_mecanismo.STL" />
+      </geometry>
+    </visual>
+  </link>
+
+  <joint name="barra" type="revolute">
+    <origin xyz="-0.016709 -0.000406 0.038228" rpy="-3.1416 1.1745 -3.1416" />
+    <parent link="motor_derecho" />
+    <child link="barra_mecanismo" />
+    <axis xyz="0 1 0" />
+    <limit lower="-1.57" upper="1.57" effort="0.5" velocity="3.14" />
+    <mimic joint="mot_der" multiplier="1.0" offset="0.0" />
+  </joint>
+
+</robot>
