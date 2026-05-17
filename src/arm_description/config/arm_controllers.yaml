@@ -1,0 +1,25 @@
+controller_manager:
+  ros__parameters:
+    update_rate: 1000  # Hz de la simulación de control
+
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+
+    arm_controller:
+      type: joint_trajectory_controller/JointTrajectoryController
+
+arm_controller:
+  ros__parameters:
+    joints:
+      - Motor_1
+      - Motor_2
+      - Motor_3
+    command_interfaces:
+      - effort
+    state_interfaces:
+      - position
+      - velocity
+    gains:
+      Motor_1: {p: 2.0,  i: 0.05, d: 0.1, i_clamp: 0.5}
+      Motor_2: {p: 2.0,  i: 0.05, d: 0.1, i_clamp: 0.5}
+      Motor_3: {p: 2.0,  i: 0.05, d: 0.1, i_clamp: 0.2}
