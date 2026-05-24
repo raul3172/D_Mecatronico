@@ -1,0 +1,56 @@
+[0.292s] DEBUG:colcon:Command line arguments: ['/usr/bin/colcon', 'list', '-p', '--base-paths', '/home/arrgusr/ROS2Dev/D_Mecatronico']
+[0.298s] DEBUG:colcon:Parsed command line arguments: Namespace(log_base=None, log_level=None, verb_name='list', build_base='build', ignore_user_meta=False, metas=['./colcon.meta'], base_paths=['/home/arrgusr/ROS2Dev/D_Mecatronico'], packages_ignore=None, packages_ignore_regex=None, paths=None, packages_up_to=None, packages_up_to_regex=None, packages_above=None, packages_above_and_dependencies=None, packages_above_depth=None, packages_select_by_dep=None, packages_skip_by_dep=None, packages_skip_up_to=None, packages_select_build_failed=False, packages_skip_build_finished=False, packages_select_test_failures=False, packages_skip_test_passed=False, packages_select=None, packages_skip=None, packages_select_regex=None, packages_skip_regex=None, packages_start=None, packages_end=None, allow_overriding=[], topological_order=False, names_only=False, paths_only=True, topological_graph=False, topological_graph_dot=False, topological_graph_density=False, topological_graph_legend=False, topological_graph_dot_cluster=False, topological_graph_dot_include_skipped=False, mixin_files=None, mixin=None, verb_parser=<colcon_mixin.mixin.mixin_argument.MixinArgumentDecorator object at 0x749881699be0>, verb_extension=<colcon_package_information.verb.list.ListVerb object at 0x749881699040>, main=<bound method ListVerb.main of <colcon_package_information.verb.list.ListVerb object at 0x749881699040>>, mixin_verb=('list',))
+[0.519s] Level 1:colcon.colcon_core.package_discovery:discover_packages(colcon_meta) check parameters
+[0.519s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) check parameters
+[0.519s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) check parameters
+[0.519s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) check parameters
+[0.519s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) discover
+[0.519s] INFO:colcon.colcon_core.package_discovery:Crawling recursively for packages in '/home/arrgusr/ROS2Dev/D_Mecatronico'
+[0.519s] Level 1:colcon.colcon_core.package_identification:_identify(/home/arrgusr/ROS2Dev/D_Mecatronico) by extensions ['ignore', 'ignore_ament_install']
+[0.520s] Level 1:colcon.colcon_core.package_identification:_identify(/home/arrgusr/ROS2Dev/D_Mecatronico) by extension 'ignore'
+[0.520s] Level 1:colcon.colcon_core.package_identification:_identify(/home/arrgusr/ROS2Dev/D_Mecatronico) by extension 'ignore_ament_install'
+[0.520s] Level 1:colcon.colcon_core.package_identification:_identify(/home/arrgusr/ROS2Dev/D_Mecatronico) by extensions ['colcon_pkg']
+[0.520s] Level 1:colcon.colcon_core.package_identification:_identify(/home/arrgusr/ROS2Dev/D_Mecatronico) by extension 'colcon_pkg'
+[0.520s] Level 1:colcon.colcon_core.package_identification:_identify(/home/arrgusr/ROS2Dev/D_Mecatronico) by extensions ['colcon_meta']
+[0.520s] Level 1:colcon.colcon_core.package_identification:_identify(/home/arrgusr/ROS2Dev/D_Mecatronico) by extension 'colcon_meta'
+[0.520s] Level 1:colcon.colcon_core.package_identification:_identify(/home/arrgusr/ROS2Dev/D_Mecatronico) by extensions ['ros']
+[0.520s] Level 1:colcon.colcon_core.package_identification:_identify(/home/arrgusr/ROS2Dev/D_Mecatronico) by extension 'ros'
+[0.646s] Level 1:colcon.colcon_core.package_identification:_identify(/home/arrgusr/ROS2Dev/D_Mecatronico) by extensions ['cmake', 'python']
+[0.647s] Level 1:colcon.colcon_core.package_identification:_identify(/home/arrgusr/ROS2Dev/D_Mecatronico) by extension 'cmake'
+[0.647s] Level 1:colcon.colcon_core.package_identification:_identify(/home/arrgusr/ROS2Dev/D_Mecatronico) by extension 'python'
+[0.648s] Level 1:colcon.colcon_core.package_identification:_identify(/home/arrgusr/ROS2Dev/D_Mecatronico) by extensions ['python_setup_py']
+[0.650s] Level 1:colcon.colcon_core.package_identification:_identify(/home/arrgusr/ROS2Dev/D_Mecatronico) by extension 'python_setup_py'
+[0.653s] Level 1:colcon.colcon_core.package_identification:_identify(/home/arrgusr/ROS2Dev/D_Mecatronico/build) by extensions ['ignore', 'ignore_ament_install']
+[0.653s] Level 1:colcon.colcon_core.package_identification:_identify(/home/arrgusr/ROS2Dev/D_Mecatronico/build) by extension 'ignore'
+[0.653s] Level 1:colcon.colcon_core.package_identification:_identify(/home/arrgusr/ROS2Dev/D_Mecatronico/build) ignored
+[0.653s] Level 1:colcon.colcon_core.package_identification:_identify(/home/arrgusr/ROS2Dev/D_Mecatronico/install) by extensions ['ignore', 'ignore_ament_install']
+[0.657s] Level 1:colcon.colcon_core.package_identification:_identify(/home/arrgusr/ROS2Dev/D_Mecatronico/install) by extension 'ignore'
+[0.658s] Level 1:colcon.colcon_core.package_identification:_identify(/home/arrgusr/ROS2Dev/D_Mecatronico/install) ignored
+[0.658s] Level 1:colcon.colcon_core.package_identification:_identify(/home/arrgusr/ROS2Dev/D_Mecatronico/log) by extensions ['ignore', 'ignore_ament_install']
+[0.662s] Level 1:colcon.colcon_core.package_identification:_identify(/home/arrgusr/ROS2Dev/D_Mecatronico/log) by extension 'ignore'
+[0.662s] Level 1:colcon.colcon_core.package_identification:_identify(/home/arrgusr/ROS2Dev/D_Mecatronico/log) ignored
+[0.662s] Level 1:colcon.colcon_core.package_identification:_identify(/home/arrgusr/ROS2Dev/D_Mecatronico/src) by extensions ['ignore', 'ignore_ament_install']
+[0.663s] Level 1:colcon.colcon_core.package_identification:_identify(/home/arrgusr/ROS2Dev/D_Mecatronico/src) by extension 'ignore'
+[0.663s] Level 1:colcon.colcon_core.package_identification:_identify(/home/arrgusr/ROS2Dev/D_Mecatronico/src) by extension 'ignore_ament_install'
+[0.663s] Level 1:colcon.colcon_core.package_identification:_identify(/home/arrgusr/ROS2Dev/D_Mecatronico/src) by extensions ['colcon_pkg']
+[0.663s] Level 1:colcon.colcon_core.package_identification:_identify(/home/arrgusr/ROS2Dev/D_Mecatronico/src) by extension 'colcon_pkg'
+[0.663s] Level 1:colcon.colcon_core.package_identification:_identify(/home/arrgusr/ROS2Dev/D_Mecatronico/src) by extensions ['colcon_meta']
+[0.663s] Level 1:colcon.colcon_core.package_identification:_identify(/home/arrgusr/ROS2Dev/D_Mecatronico/src) by extension 'colcon_meta'
+[0.663s] Level 1:colcon.colcon_core.package_identification:_identify(/home/arrgusr/ROS2Dev/D_Mecatronico/src) by extensions ['ros']
+[0.663s] Level 1:colcon.colcon_core.package_identification:_identify(/home/arrgusr/ROS2Dev/D_Mecatronico/src) by extension 'ros'
+[0.663s] Level 1:colcon.colcon_core.package_identification:_identify(/home/arrgusr/ROS2Dev/D_Mecatronico/src) by extensions ['cmake', 'python']
+[0.663s] Level 1:colcon.colcon_core.package_identification:_identify(/home/arrgusr/ROS2Dev/D_Mecatronico/src) by extension 'cmake'
+[0.663s] Level 1:colcon.colcon_core.package_identification:_identify(/home/arrgusr/ROS2Dev/D_Mecatronico/src) by extension 'python'
+[0.663s] Level 1:colcon.colcon_core.package_identification:_identify(/home/arrgusr/ROS2Dev/D_Mecatronico/src) by extensions ['python_setup_py']
+[0.663s] Level 1:colcon.colcon_core.package_identification:_identify(/home/arrgusr/ROS2Dev/D_Mecatronico/src) by extension 'python_setup_py'
+[0.665s] Level 1:colcon.colcon_core.package_identification:_identify(/home/arrgusr/ROS2Dev/D_Mecatronico/src/arm_description) by extensions ['ignore', 'ignore_ament_install']
+[0.666s] Level 1:colcon.colcon_core.package_identification:_identify(/home/arrgusr/ROS2Dev/D_Mecatronico/src/arm_description) by extension 'ignore'
+[0.669s] Level 1:colcon.colcon_core.package_identification:_identify(/home/arrgusr/ROS2Dev/D_Mecatronico/src/arm_description) by extension 'ignore_ament_install'
+[0.669s] Level 1:colcon.colcon_core.package_identification:_identify(/home/arrgusr/ROS2Dev/D_Mecatronico/src/arm_description) by extensions ['colcon_pkg']
+[0.669s] Level 1:colcon.colcon_core.package_identification:_identify(/home/arrgusr/ROS2Dev/D_Mecatronico/src/arm_description) by extension 'colcon_pkg'
+[0.669s] Level 1:colcon.colcon_core.package_identification:_identify(/home/arrgusr/ROS2Dev/D_Mecatronico/src/arm_description) by extensions ['colcon_meta']
+[0.669s] Level 1:colcon.colcon_core.package_identification:_identify(/home/arrgusr/ROS2Dev/D_Mecatronico/src/arm_description) by extension 'colcon_meta'
+[0.672s] Level 1:colcon.colcon_core.package_identification:_identify(/home/arrgusr/ROS2Dev/D_Mecatronico/src/arm_description) by extensions ['ros']
+[0.672s] Level 1:colcon.colcon_core.package_identification:_identify(/home/arrgusr/ROS2Dev/D_Mecatronico/src/arm_description) by extension 'ros'
+[0.697s] DEBUG:colcon.colcon_core.package_identification:Package '/home/arrgusr/ROS2Dev/D_Mecatronico/src/arm_description' with type 'ros.ament_cmake' and name 'arm_description'
+[0.697s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) using defaults

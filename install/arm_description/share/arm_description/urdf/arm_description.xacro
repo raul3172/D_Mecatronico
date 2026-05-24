@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8"?>
+<robot name="arm_serial" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:macro name="ax12_motor_mass" params="name parent *origin">
+    <link name="${name}_dummy_link">
+      <inertial>
+        <mass value="0.069" /> <origin xyz="0 0 0" rpy="0 0 0" />
+        <inertia ixx="1.06e-5" ixy="0" ixz="0" iyy="1.52e-5" iyz="0" izz="1.66e-5" />
+      </inertial>
+    </link>
+    <joint name="${name}_mass_joint" type="fixed">
+      <xacro:insert_block name="origin" />
+      <parent link="${parent}" />
+      <child link="${name}_dummy_link" />
+    </joint>
+  </xacro:macro>
+
+  <link name="world" />
+  
+  <joint name="base_fix" type="fixed">
+    <origin xyz="0 0 0.35" rpy="0 0 0"/>
+    <parent link="world"/>
+    <child link="base_link"/>
+  </joint>
+
+  <link name="base_link">
+    <inertial>
+      <origin xyz="0.120786849464041 -0.133300167649436 0.955384458249034" rpy="0 0 0" />
+      <mass value="0.21552057794235" />
+      <inertia ixx="0.000289123046885104" ixy="1.79640811210151E-20" ixz="-2.06678589211936E-06" iyy="0.000548429330108021" iyz="1.2692054976899E-20" izz="0.00028283305208983" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://arm_description/meshes/base_link.STL" />
+      </geometry>
+      <material name="gris_claro"><color rgba="0.8 0.8 0.8 1" /></material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://arm_description/meshes/base_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <xacro:ax12_motor_mass name="masa_motor_1" parent="base_link">
+    <origin xyz="0.12079 -0.95539 -0.0273" rpy="0 0 0" />
+  </xacro:ax12_motor_mass>
+
+  <link name="Motor1">
+    <inertial>
+      <origin xyz="0.002535 -0.06084 6.904e-05" rpy="0 0 0" />
+      <mass value="0.059144" />
+      <inertia ixx="1.865e-05" ixy="-4.28e-06" ixz="5.5e-20" iyy="2.968e-05" iyz="-1.555e-07" izz="3.774e-05" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://arm_description/meshes/Motor1.STL" />
+      </geometry>
+      <material name="azul_dynamixel"><color rgba="0.2 0.2 0.8 1" /></material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://arm_description/meshes/Motor1.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="Motor_1" type="revolute">
+    <origin xyz="0.12079 -0.95539 -0.0273" rpy="1.5708 0 2.5384" />
+    <parent link="base_link" />
+    <child link="Motor1" />
+    <axis xyz="0 1 0" />
+    <limit lower="-2.617" upper="2.617" effort="3" velocity="6.17" /> </joint>
+
+  <xacro:ax12_motor_mass name="masa_motor_2" parent="Motor1">
+    <origin xyz="0.0084837 -0.040965 0" rpy="0 0 0" />
+  </xacro:ax12_motor_mass>
+
+  <link name="Base">
+    <inertial>
+      <origin xyz="-9.136e-08 0.07994 0.00269" rpy="0 0 0" />
+      <mass value="0.080921" />
+      <inertia ixx="0.000239" ixy="-5.829e-10" ixz="6.098e-20" iyy="1.634e-05" iyz="-5.543e-19" izz="0.000251" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://arm_description/meshes/Base.STL" />
+      </geometry>
+      <material name="gris_oscuro"><color rgba="0.4 0.4 0.4 1" /></material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://arm_description/meshes/Base.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="Motor_2" type="revolute">
+    <origin xyz="0.0084837 -0.040965 0" rpy="0 0 -0.50828" />
+    <parent link="Motor1" />
+    <child link="Base" />
+    <axis xyz="0 0 1" />
+    <limit lower="-2.617" upper="2.617" effort="3" velocity="6.17" />
+  </joint>
+
+  <xacro:ax12_motor_mass name="masa_motor_3" parent="Base">
+    <origin xyz="0 0.16 0" rpy="0 0 0" />
+  </xacro:ax12_motor_mass>
+
+  <link name="Griper">
+    <inertial>
+      <origin xyz="0 -0.06232 -0.00227" rpy="0 0 0" />
+      <mass value="0.057126" />
+      <inertia ixx="0.000141" ixy="0" ixz="0" iyy="7.107e-06" iyz="0" izz="0.000144" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://arm_description/meshes/Griper.STL" />
+      </geometry>
+      <material name="rojo"><color rgba="0.8 0.2 0.2 1" /></material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://arm_description/meshes/Griper.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="Motor_3" type="revolute">
+    <origin xyz="0 0.16 0" rpy="0 0 1.2508" />
+    <parent link="Base" />
+    <child link="Griper" />
+    <axis xyz="0 0 1" />
+    <limit lower="-2.617" upper="2.617" effort="3" velocity="6.17" />
+  </joint>
+
+  <link name="payload_400g">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <mass value="0.4" /> <inertia ixx="0.0004" ixy="0" ixz="0" iyy="0.0004" iyz="0" izz="0.0004" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <sphere radius="0.02" /> </geometry>
+      <material name="verde_carga"><color rgba="0 1 0 0.8" /></material>
+    </visual>
+  </link>
+
+  <joint name="agarre_carga" type="fixed">
+    <origin xyz="0 -0.15 0" rpy="0 0 0" /> 
+    <parent link="Griper" />
+    <child link="payload_400g" />
+  </joint>
+
+<gazebo>
+    <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+      <parameters>$(find arm_description)/config/arm_controllers.yaml</parameters>
+    </plugin>
+  </gazebo>
+
+  <ros2_control name="GazeboSystem" type="system">
+    <hardware>
+      <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+    </hardware>
+    
+    <joint name="Motor_1">
+      <command_interface name="position"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+    
+    <joint name="Motor_2">
+      <command_interface name="position"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+    
+    <joint name="Motor_3">
+      <command_interface name="position"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+  </ros2_control>
+
+  <gazebo reference="Motor1"><mu1>0.2</mu1><mu2>0.2</mu2></gazebo>
+  <gazebo reference="Base"><mu1>0.2</mu1><mu2>0.2</mu2></gazebo>
+  <gazebo reference="Griper"><mu1>0.2</mu1><mu2>0.2</mu2></gazebo>
+
+</robot>

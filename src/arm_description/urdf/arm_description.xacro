@@ -4,8 +4,8 @@
   <xacro:macro name="ax12_motor_mass" params="name parent *origin">
     <link name="${name}_dummy_link">
       <inertial>
-        <mass value="0.055" /> <origin xyz="0 0 0" rpy="0 0 0" />
-        <inertia ixx="1.3e-5" ixy="0" ixz="0" iyy="1.8e-5" iyz="0" izz="1.1e-5" />
+        <mass value="0.069" /> <origin xyz="0 0 0" rpy="0 0 0" />
+        <inertia ixx="1.06e-5" ixy="0" ixz="0" iyy="1.52e-5" iyz="0" izz="1.66e-5" />
       </inertial>
     </link>
     <joint name="${name}_mass_joint" type="fixed">
@@ -18,7 +18,7 @@
   <link name="world" />
   
   <joint name="base_fix" type="fixed">
-    <origin xyz="0 0 0.15" rpy="0 0 0"/>
+    <origin xyz="0 0 0.35" rpy="0 0 0"/>
     <parent link="world"/>
     <child link="base_link"/>
   </joint>
@@ -74,7 +74,7 @@
     <parent link="base_link" />
     <child link="Motor1" />
     <axis xyz="0 1 0" />
-    <limit lower="-2.617" upper="2.617" effort="1.5" velocity="6.17" /> </joint>
+    <limit lower="-2.617" upper="2.617" effort="3" velocity="6.17" /> </joint>
 
   <xacro:ax12_motor_mass name="masa_motor_2" parent="Motor1">
     <origin xyz="0.0084837 -0.040965 0" rpy="0 0 0" />
@@ -106,7 +106,7 @@
     <parent link="Motor1" />
     <child link="Base" />
     <axis xyz="0 0 1" />
-    <limit lower="-2.617" upper="2.617" effort="1.5" velocity="6.17" />
+    <limit lower="-2.617" upper="2.617" effort="3" velocity="6.17" />
   </joint>
 
   <xacro:ax12_motor_mass name="masa_motor_3" parent="Base">
@@ -139,7 +139,7 @@
     <parent link="Base" />
     <child link="Griper" />
     <axis xyz="0 0 1" />
-    <limit lower="-2.617" upper="2.617" effort="1.5" velocity="6.17" />
+    <limit lower="-2.617" upper="2.617" effort="3" velocity="6.17" />
   </joint>
 
   <link name="payload_400g">
@@ -161,36 +161,39 @@
     <child link="payload_400g" />
   </joint>
 
-<gazebo>
+  <gazebo>
     <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
       <parameters>$(find arm_description)/config/arm_controllers.yaml</parameters>
     </plugin>
   </gazebo>
 
-  <ros2_control name="GazeboSystem" type="system">
+  <xacro:arg name="use_mock_hardware" default="false" />
+
+  <ros2_control name="RealSystem" type="system">
     <hardware>
-      <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+      <xacro:if value="$(arg use_mock_hardware)">
+        <plugin>mock_components/GenericSystem</plugin>
+      </xacro:if>
+      
+      <xacro:unless value="$(arg use_mock_hardware)">
+        <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+      </xacro:unless>
     </hardware>
     
     <joint name="Motor_1">
-      <command_interface name="effort"/>
+      <command_interface name="position"/>
       <state_interface name="position"/>
       <state_interface name="velocity"/>
-      <state_interface name="effort"/> 
     </joint>
-    
     <joint name="Motor_2">
-      <command_interface name="effort"/>
+      <command_interface name="position"/>
       <state_interface name="position"/>
       <state_interface name="velocity"/>
-      <state_interface name="effort"/>
     </joint>
-    
     <joint name="Motor_3">
-      <command_interface name="effort"/>
+      <command_interface name="position"/>
       <state_interface name="position"/>
       <state_interface name="velocity"/>
-      <state_interface name="effort"/>
     </joint>
   </ros2_control>
 
