@@ -9,47 +9,71 @@ class SerialBridge(Node):
     def __init__(self):
         super().__init__('serial_bridge_node')
 
-        # 1. Configurar el puerto USB
-        # Usualmente el ESP32 aparece como ttyUSB0 o ttyACM0. 
         self.puerto_serial = '/dev/ttyUSB0' 
-        self.baudrate = 115200
+        self.baudrate = 115200 
+        self.esp32 = None
+        self.intentos_reconex = 0
         
-        try:
-            self.arduino = serial.Serial(self.puerto_serial, self.baudrate, timeout=0.1)
-            self.get_logger().info(f"Conectado al ESP32 en {self.puerto_serial}")
-        except serial.SerialException:
-            self.get_logger().error(f"No se pudo abrir {self.puerto_serial}. Revisa la conexión o los permisos.")
-            self.arduino = None
+        # El orden ESTRICTO en que el ESP32 espera los datos
+        self.joint_names = [
+            'moviento_en_x', 
+            'disco_soportes_rotacion', 
+            'brazo_motores', 
+            'brazo_gripper_azul',
+            'gripper_mecanismo'
+        ]
+        
+        # Memoria interna para guardar la última posición conocida de cada motor
+        self.current_pos = {name: 0.0 for name in self.joint_names}
 
-        # 2. Suscribe a la telemetría del robot virtual
+        self.conectar_serial()
+
+        # Nos suscribimos a la telemetría global
         self.sub = self.create_subscription(JointState, '/joint_states', self.state_cb, 10)
-        self.joint_names = ['Motor_1', 'Motor_2', 'Motor_3']
         
-        # Temporizador para limitar los envíos (50 Hz = 0.02 segundos)
-        self.last_send_time = time.time()
+        # Reloj Maestro: Ejecuta la función de envío exactamente a 50 Hz (0.02 segundos)
+        self.timer = self.create_timer(0.02, self.enviar_trama)
+
+    def conectar_serial(self):
+        try:
+            if self.esp32 and self.esp32.is_open:
+                self.esp32.close()
+            self.esp32 = serial.Serial(self.puerto_serial, self.baudrate, timeout=0.1)
+            self.get_logger().info(f"✅ ENLACE ESTABLECIDO: ESP32 conectado en {self.puerto_serial}")
+        except serial.SerialException:
+            # Solo imprime el error cada cierto tiempo para no saturar la terminal
+            if self.intentos_reconex % 50 == 0:
+                self.get_logger().error(f"❌ ENLACE PERDIDO: Esperando al ESP32 en {self.puerto_serial}... revisa el cable USB.")
+            self.esp32 = None
 
     def state_cb(self, msg):
-        if self.arduino is None:
+        # Actualizamos la memoria interna SOLAMENTE con los motores que vengan en este mensaje
+        for i, name in enumerate(msg.name):
+            if name in self.current_pos:
+                self.current_pos[name] = msg.position[i]
+
+    def enviar_trama(self):
+        # 1. Si no hay conexión, intenta reconectar sin bloquear a ROS 2
+        if self.esp32 is None or not self.esp32.is_open:
+            self.intentos_reconex += 1
+            if self.intentos_reconex >= 50: # Intenta cada 1 segundo (50 ciclos de 0.02s)
+                self.conectar_serial()
+                self.intentos_reconex = 0
             return
 
-        # Control de frecuencia de envío
-        current_time = time.time()
-        if (current_time - self.last_send_time) < 0.02:
-            return
-        self.last_send_time = current_time
+        # 2. Extraer las posiciones de la memoria en el orden exacto para el ESP32
+        p = [self.current_pos[name] for name in self.joint_names]
 
-        # Extraer posiciones del mensaje asegurando el orden correcto
-        posiciones = [0.0, 0.0, 0.0]
+        # 3. Empaquetar en formato <V1,V2,V3,V4,V5>\n
+        trama = f"<{p[0]:.4f},{p[1]:.4f},{p[2]:.4f},{p[3]:.4f},{p[4]:.4f}>\n"
+        
+        # 4. Disparar por el puerto serial
         try:
-            for i, name in enumerate(self.joint_names):
-                index = msg.name.index(name)
-                posiciones[i] = msg.position[index]
-        except ValueError:
-            return # Si la trama está incompleta, la ignoramos por seguridad
-
-        # 3. Empaquetar y disparar por el USB
-        trama = f"<{posiciones[0]:.4f},{posiciones[1]:.4f},{posiciones[2]:.4f}>\n"
-        self.arduino.write(trama.encode('utf-8'))
+            self.esp32.write(trama.encode('utf-8'))
+        except serial.SerialException:
+            self.get_logger().error("⚠️ DESCONEXIÓN FÍSICA DETECTADA durante el envío.")
+            self.esp32.close()
+            self.esp32 = None
 
 def main(args=None):
     rclpy.init(args=args)
@@ -59,8 +83,8 @@ def main(args=None):
     except KeyboardInterrupt:
         pass
     finally:
-        if node.arduino and node.arduino.is_open:
-            node.arduino.close()
+        if node.esp32 and node.esp32.is_open:
+            node.esp32.close()
         node.destroy_node()
         rclpy.shutdown()
 

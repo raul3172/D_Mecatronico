@@ -1,40 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
-<robot name="arm_serial" xmlns:xacro="http://www.ros.org/wiki/xacro">
+<!--
+  Diseño_Final_Brazo_carro_5.urdf
+  ================================
+  URDF exportado por SolidWorks + adiciones para ROS 2 / Gazebo Harmonic:
 
-  <xacro:macro name="ax12_motor_mass" params="name parent *origin">
-    <link name="${name}_dummy_link">
-      <inertial>
-        <mass value="0.069" /> <origin xyz="0 0 0" rpy="0 0 0" />
-        <inertia ixx="1.06e-5" ixy="0" ixz="0" iyy="1.52e-5" iyz="0" izz="1.66e-5" />
-      </inertial>
-    </link>
-    <joint name="${name}_mass_joint" type="fixed">
-      <xacro:insert_block name="origin" />
-      <parent link="${parent}" />
-      <child link="${name}_dummy_link" />
-    </joint>
-  </xacro:macro>
+  CAMBIOS RESPECTO AL EXPORT ORIGINAL:
+  ─────────────────────────────────────
+  1. moviento_en_x   : límites corregidos [0, 0.30 m], effort=50, velocity=0.5
+  2. disco_soportes_rotacion, brazo_motores, brazo_gripper_azul:
+       continuous → revolute  +  límites ±2.094 rad  (requerido por JointTrajectoryController)
+  3. giro_360 / griper_mecanismo: se mantienen fixed (intencional del CAD)
+  4. Links dummy de masa añadidos (STS3215 ≈ 64 g) sin alterar la geometría visual:
+       masa_motor_riel, masa_motor_hombro, masa_motor_codo, masa_motor_muneca
+  5. Link payload_400g (esfera verde) fijo al gripper
+  6. Bloque <gazebo> con plugin gz_ros2_control
+  7. Bloque <ros2_control> con mock_components/GenericSystem (use_mock_hardware)
+       y gz_ros2_control/GazeboSimSystem para simulación real
+-->
+<robot name="Diseño_Final_Brazo_carro_5">
 
+  <!-- ═══════════════════════════════════════════════════════════════
+       ARG: activa hardware virtual para pruebas sin Gazebo
+       Uso: xacro archivo.urdf.xacro use_mock_hardware:=true
+  ════════════════════════════════════════════════════════════════ -->
+  <!-- Nota: este es URDF puro (no xacro), así que el arg se gestiona
+       desde el launch file pasando el parámetro robot_description.    -->
+
+  <!-- Link raíz del mundo (fijo, sin inercia) -->
   <link name="world" />
-  
-  <joint name="base_fix" type="fixed">
-    <origin xyz="0 0 0.35" rpy="0 0 0"/>
-    <parent link="world"/>
-    <child link="base_link"/>
+
+  <!-- Joint que ancla el ensamble al mundo con offset en +Z -->
+  <joint name="world_to_base" type="fixed">
+  <parent link="world" />
+  <child  link="base_link" />
+  <origin xyz="0 0 1.0" rpy="0 0 0" />
+  <!--        ↑↑↑
+    Ajustar este valor hasta que el robot quede sobre el suelo.
+    Punto de partida: 1.0 m.
+    Si sigue bajo tierra: aumenta (1.2, 1.5...).
+    Si flota: disminuye (0.8, 0.7...).
+  -->
   </joint>
 
+  <!-- ═══════════════════════════════════════════════════════════════
+       BASE_LINK  (estructura del carro / riel — del CAD original)
+  ════════════════════════════════════════════════════════════════ -->
   <link name="base_link">
     <inertial>
-      <origin xyz="0.120786849464041 -0.133300167649436 0.955384458249034" rpy="0 0 0" />
-      <mass value="0.21552057794235" />
-      <inertia ixx="0.000289123046885104" ixy="1.79640811210151E-20" ixz="-2.06678589211936E-06" iyy="0.000548429330108021" iyz="1.2692054976899E-20" izz="0.00028283305208983" />
+      <origin xyz="-0.767839023684456 -0.977798899526784 -0.691582390969042" rpy="0 0 0" />
+      <mass value="10.4895723696251" />
+      <inertia
+        ixx="0.024486818662939"   ixy="-1.23806424790793E-08" ixz="-3.35125751095362E-06"
+        iyy="0.895617163832146"   iyz="3.83384416608665E-10"
+        izz="0.919360561343836" />
     </inertial>
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
         <mesh filename="package://arm_description/meshes/base_link.STL" />
       </geometry>
-      <material name="gris_claro"><color rgba="0.8 0.8 0.8 1" /></material>
+      <material name="gris_claro"><color rgba="0.898 0.918 0.929 1" /></material>
     </visual>
     <collision>
       <origin xyz="0 0 0" rpy="0 0 0" />
@@ -44,161 +69,419 @@
     </collision>
   </link>
 
-  <xacro:ax12_motor_mass name="masa_motor_1" parent="base_link">
-    <origin xyz="0.12079 -0.95539 -0.0273" rpy="0 0 0" />
-  </xacro:ax12_motor_mass>
-
-  <link name="Motor1">
+  <!-- Masa dummy: motor del riel (montado en la base, mueve el carro) -->
+  <link name="masa_motor_riel_dummy">
     <inertial>
-      <origin xyz="0.002535 -0.06084 6.904e-05" rpy="0 0 0" />
-      <mass value="0.059144" />
-      <inertia ixx="1.865e-05" ixy="-4.28e-06" ixz="5.5e-20" iyy="2.968e-05" iyz="-1.555e-07" izz="3.774e-05" />
+      <mass value="0.064" />
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <inertia ixx="1.06e-5" ixy="0" ixz="0"
+               iyy="1.45e-5" iyz="0"
+               izz="1.55e-5" />
     </inertial>
-    <visual>
-      <origin xyz="0 0 0" rpy="0 0 0" />
-      <geometry>
-        <mesh filename="package://arm_description/meshes/Motor1.STL" />
-      </geometry>
-      <material name="azul_dynamixel"><color rgba="0.2 0.2 0.8 1" /></material>
-    </visual>
-    <collision>
-      <origin xyz="0 0 0" rpy="0 0 0" />
-      <geometry>
-        <mesh filename="package://arm_description/meshes/Motor1.STL" />
-      </geometry>
-    </collision>
   </link>
-
-  <joint name="Motor_1" type="revolute">
-    <origin xyz="0.12079 -0.95539 -0.0273" rpy="1.5708 0 2.5384" />
+  <joint name="masa_motor_riel_joint" type="fixed">
+    <!-- Mismo origen que moviento_en_x: donde está físicamente el motor -->
+    <origin xyz="-0.895839610962944 -0.977798902169002 -0.64463447777702"
+            rpy="1.5707963267949 0 1.5707963267949" />
     <parent link="base_link" />
-    <child link="Motor1" />
+    <child  link="masa_motor_riel_dummy" />
+  </joint>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       EJE_X  (carro deslizante — del CAD original)
+  ════════════════════════════════════════════════════════════════ -->
+  <link name="eje_x">
+    <inertial>
+      <origin xyz="2.30268809181533E-05 -0.00622054699002839 -0.0754124933910654" rpy="0 0 0" />
+      <mass value="0.561150750908205" />
+      <inertia
+        ixx="0.000593899384805246"  ixy="3.94233695906212E-12"  ixz="-4.86722624063697E-08"
+        iyy="0.00117171139608908"   iyz="-2.76636355140426E-07"
+        izz="0.000632643695930522" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://arm_description/meshes/eje_x.STL" />
+      </geometry>
+      <material name="gris_claro"><color rgba="0.898 0.918 0.929 1" /></material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://arm_description/meshes/eje_x.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <!--
+    JOINT 1 (controlado): RIEL LINEAL
+    ──────────────────────────────────
+    Tipo: prismatic  |  Eje: Z local (≡ X mundial por el RPY 90°/90°)
+    Rango físico: 0 a 30 cm
+    CORRECCIÓN: límites eran [0,0] effort=0 velocity=0 → ahora funcionales
+  -->
+  <joint name="moviento_en_x" type="prismatic">
+    <origin xyz="-0.895839610962944 -0.977798902169002 -0.64463447777702"
+            rpy="1.5707963267949 0 1.5707963267949" />
+    <parent link="base_link" />
+    <child  link="eje_x" />
+    <axis xyz="0 0 1" />
+    <limit lower="0" upper="0.30" effort="50" velocity="0.5" />
+  </joint>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       ROTACION_BRAZO  (base giratoria del brazo — del CAD)
+  ════════════════════════════════════════════════════════════════ -->
+  <link name="rotacion_brazo">
+    <inertial>
+      <origin xyz="-2.44249065417534E-15 0.0308605150324593 1.88737914186277E-15" rpy="0 0 0" />
+      <mass value="0.105827868458871" />
+      <inertia
+        ixx="0.000241985964194027"  ixy="-3.84091497912795E-19"  ixz="4.96953568409608E-19"
+        iyy="0.000446613771563767"  iyz="1.66023209951045E-19"
+        izz="0.000241985964194026" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://arm_description/meshes/rotacion_brazo.STL" />
+      </geometry>
+      <material name="azul_claro"><color rgba="0.792 0.820 0.933 1" /></material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://arm_description/meshes/rotacion_brazo.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- giro_360: FIXED intencionalmente (bloqueado en CAD) -->
+  <joint name="giro_360" type="fixed">
+    <origin xyz="0 0 -0.0700000000000027" rpy="0 0 0" />
+    <parent link="eje_x" />
+    <child  link="rotacion_brazo" />
+  </joint>
+
+  <!-- Masa dummy: motor del hombro (montado en rotacion_brazo) -->
+  <link name="masa_motor_hombro_dummy">
+    <inertial>
+      <mass value="0.064" />
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <inertia ixx="1.06e-5" ixy="0" ixz="0"
+               iyy="1.45e-5" iyz="0"
+               izz="1.55e-5" />
+    </inertial>
+  </link>
+  <joint name="masa_motor_hombro_joint" type="fixed">
+    <!-- Origen = donde arranca disco_soportes_rotacion -->
+    <origin xyz="0 0.0463499999999999 0" rpy="0 1.20138367619357 3.14159265358979" />
+    <parent link="rotacion_brazo" />
+    <child  link="masa_motor_hombro_dummy" />
+  </joint>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       DISCO_SOPORTES  (eslabón hombro — del CAD)
+  ════════════════════════════════════════════════════════════════ -->
+  <link name="disco_soportes">
+    <inertial>
+      <origin xyz="-0.000838170732078591 -0.0212543006415097 -0.00166146627505315" rpy="0 0 0" />
+      <mass value="0.0982346618732346" />
+      <inertia
+        ixx="0.000110776258324001"  ixy="6.2931170439961E-08"   ixz="3.95562597214436E-08"
+        iyy="0.000133607914054372"  iyz="-4.97583835635703E-06"
+        izz="8.686632370119E-05" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://arm_description/meshes/disco_soportes.STL" />
+      </geometry>
+      <material name="azul_vivo"><color rgba="0.008 0.239 0.824 1" /></material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://arm_description/meshes/disco_soportes.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <!--
+    JOINT 2 (controlado): HOMBRO — ROTACIÓN
+    ─────────────────────────────────────────
+    continuous → revolute  +  límites ±2.094 rad (~±120°)
+    CORRECCIÓN: continuous no admite limits en JointTrajectoryController
+  -->
+  <joint name="disco_soportes_rotacion" type="revolute">
+    <origin xyz="0 0.0463499999999999 0" rpy="0 1.20138367619357 3.14159265358979" />
+    <parent link="rotacion_brazo" />
+    <child  link="disco_soportes" />
     <axis xyz="0 1 0" />
-    <limit lower="-2.617" upper="2.617" effort="3" velocity="6.17" /> </joint>
+    <limit lower="-2.094" upper="2.094" effort="3" velocity="6.17" />
+  </joint>
 
-  <xacro:ax12_motor_mass name="masa_motor_2" parent="Motor1">
-    <origin xyz="0.0084837 -0.040965 0" rpy="0 0 0" />
-  </xacro:ax12_motor_mass>
-
-  <link name="Base">
+  <!-- Masa dummy: motor del codo (montado en disco_soportes) -->
+  <link name="masa_motor_codo_dummy">
     <inertial>
-      <origin xyz="-9.136e-08 0.07994 0.00269" rpy="0 0 0" />
-      <mass value="0.080921" />
-      <inertia ixx="0.000239" ixy="-5.829e-10" ixz="6.098e-20" iyy="1.634e-05" iyz="-5.543e-19" izz="0.000251" />
+      <mass value="0.064" />
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <inertia ixx="1.06e-5" ixy="0" ixz="0"
+               iyy="1.45e-5" iyz="0"
+               izz="1.55e-5" />
+    </inertial>
+  </link>
+  <joint name="masa_motor_codo_joint" type="fixed">
+    <!-- Origen = donde arranca brazo_motores -->
+    <origin xyz="0 -0.0529999999999985 -0.00949999999999551"
+            rpy="-1.5707963267949 1.02839961384078 1.5707963267949" />
+    <parent link="disco_soportes" />
+    <child  link="masa_motor_codo_dummy" />
+  </joint>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       BRAZO_BASE  (eslabón codo — del CAD)
+  ════════════════════════════════════════════════════════════════ -->
+  <link name="brazo_base">
+    <inertial>
+      <origin xyz="-1.65889524339491E-11 0.0909111374249095 0.0044382355421646" rpy="0 0 0" />
+      <mass value="0.138901841849158" />
+      <inertia
+        ixx="0.000512239486576552"  ixy="-2.07226237004235E-13"  ixz="8.99345702076726E-17"
+        iyy="2.87391979995817E-05"  iyz="1.75395507698007E-07"
+        izz="0.000536155521882061" />
     </inertial>
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://arm_description/meshes/Base.STL" />
+        <mesh filename="package://arm_description/meshes/brazo_base.STL" />
       </geometry>
-      <material name="gris_oscuro"><color rgba="0.4 0.4 0.4 1" /></material>
+      <material name="azul_claro"><color rgba="0.792 0.820 0.933 1" /></material>
     </visual>
     <collision>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://arm_description/meshes/Base.STL" />
+        <mesh filename="package://arm_description/meshes/brazo_base.STL" />
       </geometry>
     </collision>
   </link>
 
-  <joint name="Motor_2" type="revolute">
-    <origin xyz="0.0084837 -0.040965 0" rpy="0 0 -0.50828" />
-    <parent link="Motor1" />
-    <child link="Base" />
+  <!--
+    JOINT 3 (controlado): CODO
+    ───────────────────────────
+    continuous → revolute  +  límites ±2.094 rad
+  -->
+  <joint name="brazo_motores" type="revolute">
+    <origin xyz="0 -0.0529999999999985 -0.00949999999999551"
+            rpy="-1.5707963267949 1.02839961384078 1.5707963267949" />
+    <parent link="disco_soportes" />
+    <child  link="brazo_base" />
     <axis xyz="0 0 1" />
-    <limit lower="-2.617" upper="2.617" effort="3" velocity="6.17" />
+    <limit lower="-2.094" upper="2.094" effort="3" velocity="6.17" />
   </joint>
 
-  <xacro:ax12_motor_mass name="masa_motor_3" parent="Base">
-    <origin xyz="0 0.16 0" rpy="0 0 0" />
-  </xacro:ax12_motor_mass>
-
-  <link name="Griper">
+  <!-- Masa dummy: motor de muñeca (montado en brazo_base) -->
+  <link name="masa_motor_muneca_dummy">
     <inertial>
-      <origin xyz="0 -0.06232 -0.00227" rpy="0 0 0" />
-      <mass value="0.057126" />
-      <inertia ixx="0.000141" ixy="0" ixz="0" iyy="7.107e-06" iyz="0" izz="0.000144" />
+      <mass value="0.064" />
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <inertia ixx="1.06e-5" ixy="0" ixz="0"
+               iyy="1.45e-5" iyz="0"
+               izz="1.55e-5" />
+    </inertial>
+  </link>
+  <joint name="masa_motor_muneca_joint" type="fixed">
+    <!-- Origen = donde arranca brazo_gripper_azul -->
+    <origin xyz="0 0.170000000000034 0" rpy="-1.57079632679489 0 1.39726597352321" />
+    <parent link="brazo_base" />
+    <child  link="masa_motor_muneca_dummy" />
+  </joint>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       BRAZO_GRIPPER  (eslabón muñeca — del CAD)
+  ════════════════════════════════════════════════════════════════ -->
+  <link name="brazo_gripper">
+    <inertial>
+      <origin xyz="-1.14352971536391E-14 0.00970468342117248 -0.072570676566811" rpy="0 0 0" />
+      <mass value="0.0747618610211338" />
+      <inertia
+        ixx="0.000137869884545826"  ixy="1.18584612615602E-20"   ixz="-3.71339244076285E-18"
+        iyy="0.000141206462567474"  iyz="-8.59314924989488E-19"
+        izz="9.79783438556282E-06" />
     </inertial>
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://arm_description/meshes/Griper.STL" />
+        <mesh filename="package://arm_description/meshes/brazo_gripper.STL" />
       </geometry>
-      <material name="rojo"><color rgba="0.8 0.2 0.2 1" /></material>
+      <material name="azul_claro"><color rgba="0.792 0.820 0.933 1" /></material>
     </visual>
     <collision>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://arm_description/meshes/Griper.STL" />
+        <mesh filename="package://arm_description/meshes/brazo_gripper.STL" />
       </geometry>
     </collision>
   </link>
 
-  <joint name="Motor_3" type="revolute">
-    <origin xyz="0 0.16 0" rpy="0 0 1.2508" />
-    <parent link="Base" />
-    <child link="Griper" />
-    <axis xyz="0 0 1" />
-    <limit lower="-2.617" upper="2.617" effort="3" velocity="6.17" />
+  <!--
+    JOINT 4 (controlado): MUÑECA
+    ─────────────────────────────
+    continuous → revolute  +  límites ±2.094 rad
+  -->
+  <joint name="brazo_gripper_azul" type="revolute">
+    <origin xyz="0 0.170000000000034 0" rpy="-1.57079632679489 0 1.39726597352321" />
+    <parent link="brazo_base" />
+    <child  link="brazo_gripper" />
+    <axis xyz="0 1 0" />
+    <limit lower="-2.094" upper="2.094" effort="3" velocity="6.17" />
   </joint>
 
+  <!-- ═══════════════════════════════════════════════════════════════
+       GRIPPER  (efector final — del CAD, joint fixed)
+  ════════════════════════════════════════════════════════════════ -->
+  <link name="gripper">
+    <inertial>
+      <origin xyz="0.000333115444986598 0.0381366742086494 0.00835604029932591" rpy="0 0 0" />
+      <mass value="0.0316121714248153" />
+      <inertia
+        ixx="5.65497411170196E-06"  ixy="-8.2397641187764E-08"  ixz="6.80661478023777E-14"
+        iyy="3.47031375311846E-06"  iyz="2.86550670073726E-14"
+        izz="8.64948256193457E-06" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://arm_description/meshes/gripper.STL" />
+      </geometry>
+      <material name="gris_medio"><color rgba="0.698 0.698 0.698 1" /></material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://arm_description/meshes/gripper.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- gripper_mecanismo: ahora revolute-->
+  <joint name="gripper_mecanismo" type="revolute">
+    <origin xyz="-0.00750000000010087 0.000549999999957196 -0.14000000000012"
+            rpy="-1.57079632679488 0 -1.57079632679488" />
+    <parent link="brazo_gripper" />
+    <child  link="gripper" />
+    <axis xyz="0 0 1" />
+    <limit lower="0.0" upper="1.0" effort="2" velocity="3.0" />
+  </joint>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       PAYLOAD 400 g  (esfera verde semitransparente para debug)
+       Fijo al gripper — representa la carga útil máxima.
+  ════════════════════════════════════════════════════════════════ -->
   <link name="payload_400g">
     <inertial>
+      <mass value="0.4" />
       <origin xyz="0 0 0" rpy="0 0 0" />
-      <mass value="0.4" /> <inertia ixx="0.0004" ixy="0" ixz="0" iyy="0.0004" iyz="0" izz="0.0004" />
+      <inertia ixx="4e-4" ixy="0" ixz="0"
+               iyy="4e-4" iyz="0"
+               izz="4e-4" />
     </inertial>
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
-      <geometry>
-        <sphere radius="0.02" /> </geometry>
-      <material name="verde_carga"><color rgba="0 1 0 0.8" /></material>
+      <geometry><sphere radius="0.025" /></geometry>
+      <material name="verde_carga"><color rgba="0.0 0.9 0.2 0.6" /></material>
     </visual>
   </link>
 
-  <joint name="agarre_carga" type="fixed">
-    <origin xyz="0 -0.15 0" rpy="0 0 0" /> 
-    <parent link="Griper" />
-    <child link="payload_400g" />
+  <joint name="payload_joint" type="fixed">
+    <!--
+      Ubicado ~4 cm más allá del gripper en su dirección local Y
+      (punta de los dedos / punto de agarre).
+    -->
+    <origin xyz="0 0.1 0" rpy="0 0 0" />
+    <parent link="gripper" />
+    <child  link="payload_400g" />
   </joint>
 
+  <!-- ═══════════════════════════════════════════════════════════════
+       GAZEBO — Plugin gz_ros2_control (Gazebo Harmonic / Jazzy)
+  ════════════════════════════════════════════════════════════════ -->
   <gazebo>
-    <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+    <plugin filename="gz_ros2_control-system"
+            name="gz_ros2_control::GazeboSimROS2ControlPlugin">
       <parameters>$(find arm_description)/config/arm_controllers.yaml</parameters>
     </plugin>
   </gazebo>
 
-  <xacro:arg name="use_mock_hardware" default="false" />
+  <!-- Fricción de contacto para los links móviles -->
+  <gazebo reference="eje_x">         <mu1>0.4</mu1><mu2>0.4</mu2></gazebo>
+  <gazebo reference="disco_soportes"><mu1>0.2</mu1><mu2>0.2</mu2></gazebo>
+  <gazebo reference="brazo_base">    <mu1>0.2</mu1><mu2>0.2</mu2></gazebo>
+  <gazebo reference="brazo_gripper"> <mu1>0.2</mu1><mu2>0.2</mu2></gazebo>
+  <gazebo reference="gripper">       <mu1>0.3</mu1><mu2>0.3</mu2></gazebo>
 
-  <ros2_control name="RealSystem" type="system">
+  <!-- ═══════════════════════════════════════════════════════════════
+       ROS2_CONTROL
+       ─────────────
+       use_mock_hardware=true  → mock_components/GenericSystem
+         Úsalo con: real_robot.launch.py  (sin Gazebo, prueba de scripts)
+
+       use_mock_hardware=false → gz_ros2_control/GazeboSimSystem  (default)
+         Úsalo con: gazebo.launch.py
+
+       Los 4 joints controlables van aquí. Los joints fixed y los
+       dummy de masa NO se declaran (no tienen command_interface).
+  ════════════════════════════════════════════════════════════════ -->
+  <ros2_control name="BrazoCarro" type="system">
     <hardware>
-      <xacro:if value="$(arg use_mock_hardware)">
-        <plugin>mock_components/GenericSystem</plugin>
-      </xacro:if>
+      <!-- Hardware virtual para pruebas offline (sin Gazebo) -->
+      <!-- Actívalo desde el launch: xacro ... use_mock_hardware:=true -->
+      <!-- URDF puro no admite xacro:if, usa el launch para elegir -->
+      <!-- Para producción descomenta solo UNO de los dos bloques: -->
+
+      <!-- ── OPCIÓN A: Mock Hardware (pruebas con real_robot.launch) ── 
+      <plugin>mock_components/GenericSystem</plugin>
+      -->
+      <!-- ── OPCIÓN B: Gazebo (descomenta y comenta la opción A) ────── -->
+      <plugin>gz_ros2_control/GazeboSimSystem</plugin>
       
-      <xacro:unless value="$(arg use_mock_hardware)">
-        <plugin>gz_ros2_control/GazeboSimSystem</plugin>
-      </xacro:unless>
     </hardware>
-    
-    <joint name="Motor_1">
-      <command_interface name="position"/>
-      <state_interface name="position"/>
-      <state_interface name="velocity"/>
+
+    <!-- Riel lineal -->
+    <joint name="moviento_en_x">
+      <command_interface name="position" />
+      <state_interface   name="position" />
+      <state_interface   name="velocity" />
     </joint>
-    <joint name="Motor_2">
-      <command_interface name="position"/>
-      <state_interface name="position"/>
-      <state_interface name="velocity"/>
+
+    <!-- Hombro -->
+    <joint name="disco_soportes_rotacion">
+      <command_interface name="position" />
+      <state_interface   name="position" />
+      <state_interface   name="velocity" />
     </joint>
-    <joint name="Motor_3">
-      <command_interface name="position"/>
-      <state_interface name="position"/>
-      <state_interface name="velocity"/>
+
+    <!-- Codo -->
+    <joint name="brazo_motores">
+      <command_interface name="position" />
+      <state_interface   name="position" />
+      <state_interface   name="velocity" />
+    </joint>
+
+    <!-- Muñeca -->
+    <joint name="brazo_gripper_azul">
+      <command_interface name="position" />
+      <state_interface   name="position" />
+      <state_interface   name="velocity" />
+    </joint>
+  
+    <!-- Gripper -->
+    <joint name="gripper_mecanismo">
+      <command_interface name="position" />
+      <state_interface   name="position" />
+      <state_interface   name="velocity" />
     </joint>
   </ros2_control>
-
-  <gazebo reference="Motor1"><mu1>0.2</mu1><mu2>0.2</mu2></gazebo>
-  <gazebo reference="Base"><mu1>0.2</mu1><mu2>0.2</mu2></gazebo>
-  <gazebo reference="Griper"><mu1>0.2</mu1><mu2>0.2</mu2></gazebo>
 
 </robot>

@@ -1,0 +1,38 @@
+[0.066s] Invoking command in '/home/arrgusr/ROS2Dev/D_Mecatronico/build/arm_description': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --build /home/arrgusr/ROS2Dev/D_Mecatronico/build/arm_description -- -j4 -l4
+[0.551s] Invoked command in '/home/arrgusr/ROS2Dev/D_Mecatronico/build/arm_description' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --build /home/arrgusr/ROS2Dev/D_Mecatronico/build/arm_description -- -j4 -l4
+[0.625s] Invoking command in '/home/arrgusr/ROS2Dev/D_Mecatronico/build/arm_description': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --install /home/arrgusr/ROS2Dev/D_Mecatronico/build/arm_description
+[0.660s] -- Install configuration: ""
+[0.664s] -- Up-to-date: /home/arrgusr/ROS2Dev/D_Mecatronico/install/arm_description/share/arm_description/urdf
+[0.664s] -- Up-to-date: /home/arrgusr/ROS2Dev/D_Mecatronico/install/arm_description/share/arm_description/urdf/arm_description.xacro
+[0.664s] -- Up-to-date: /home/arrgusr/ROS2Dev/D_Mecatronico/install/arm_description/share/arm_description/meshes
+[0.665s] -- Up-to-date: /home/arrgusr/ROS2Dev/D_Mecatronico/install/arm_description/share/arm_description/meshes/rotacion_brazo.STL
+[0.665s] -- Up-to-date: /home/arrgusr/ROS2Dev/D_Mecatronico/install/arm_description/share/arm_description/meshes/base_link.STL
+[0.665s] -- Up-to-date: /home/arrgusr/ROS2Dev/D_Mecatronico/install/arm_description/share/arm_description/meshes/brazo_gripper.STL
+[0.666s] -- Up-to-date: /home/arrgusr/ROS2Dev/D_Mecatronico/install/arm_description/share/arm_description/meshes/disco_soportes.STL
+[0.666s] -- Up-to-date: /home/arrgusr/ROS2Dev/D_Mecatronico/install/arm_description/share/arm_description/meshes/gripper.STL
+[0.671s] -- Up-to-date: /home/arrgusr/ROS2Dev/D_Mecatronico/install/arm_description/share/arm_description/meshes/brazo_base.STL
+[0.674s] -- Up-to-date: /home/arrgusr/ROS2Dev/D_Mecatronico/install/arm_description/share/arm_description/meshes/eje_x.STL
+[0.675s] -- Up-to-date: /home/arrgusr/ROS2Dev/D_Mecatronico/install/arm_description/share/arm_description/launch
+[0.681s] -- Up-to-date: /home/arrgusr/ROS2Dev/D_Mecatronico/install/arm_description/share/arm_description/launch/real_robot.launch.py
+[0.682s] -- Up-to-date: /home/arrgusr/ROS2Dev/D_Mecatronico/install/arm_description/share/arm_description/launch/gazebo.launch.py
+[0.683s] -- Up-to-date: /home/arrgusr/ROS2Dev/D_Mecatronico/install/arm_description/share/arm_description/rviz
+[0.694s] -- Up-to-date: /home/arrgusr/ROS2Dev/D_Mecatronico/install/arm_description/share/arm_description/config
+[0.694s] -- Up-to-date: /home/arrgusr/ROS2Dev/D_Mecatronico/install/arm_description/share/arm_description/config/arm_controllers.yaml
+[0.695s] -- Up-to-date: /home/arrgusr/ROS2Dev/D_Mecatronico/install/arm_description/lib/arm_description/teach_repeat.py
+[0.695s] -- Up-to-date: /home/arrgusr/ROS2Dev/D_Mecatronico/install/arm_description/lib/arm_description/teach_pendant_gui.py
+[0.695s] -- Up-to-date: /home/arrgusr/ROS2Dev/D_Mecatronico/install/arm_description/share/ament_index/resource_index/package_run_dependencies/arm_description
+[0.697s] -- Up-to-date: /home/arrgusr/ROS2Dev/D_Mecatronico/install/arm_description/share/ament_index/resource_index/parent_prefix_path/arm_description
+[0.698s] -- Up-to-date: /home/arrgusr/ROS2Dev/D_Mecatronico/install/arm_description/share/arm_description/environment/ament_prefix_path.sh
+[0.698s] -- Up-to-date: /home/arrgusr/ROS2Dev/D_Mecatronico/install/arm_description/share/arm_description/environment/ament_prefix_path.dsv
+[0.699s] -- Up-to-date: /home/arrgusr/ROS2Dev/D_Mecatronico/install/arm_description/share/arm_description/environment/path.sh
+[0.700s] -- Up-to-date: /home/arrgusr/ROS2Dev/D_Mecatronico/install/arm_description/share/arm_description/environment/path.dsv
+[0.700s] -- Up-to-date: /home/arrgusr/ROS2Dev/D_Mecatronico/install/arm_description/share/arm_description/local_setup.bash
+[0.700s] -- Up-to-date: /home/arrgusr/ROS2Dev/D_Mecatronico/install/arm_description/share/arm_description/local_setup.sh
+[0.700s] -- Up-to-date: /home/arrgusr/ROS2Dev/D_Mecatronico/install/arm_description/share/arm_description/local_setup.zsh
+[0.701s] -- Up-to-date: /home/arrgusr/ROS2Dev/D_Mecatronico/install/arm_description/share/arm_description/local_setup.dsv
+[0.701s] -- Installing: /home/arrgusr/ROS2Dev/D_Mecatronico/install/arm_description/share/arm_description/package.dsv
+[0.701s] -- Up-to-date: /home/arrgusr/ROS2Dev/D_Mecatronico/install/arm_description/share/ament_index/resource_index/packages/arm_description
+[0.703s] -- Up-to-date: /home/arrgusr/ROS2Dev/D_Mecatronico/install/arm_description/share/arm_description/cmake/arm_descriptionConfig.cmake
+[0.704s] -- Up-to-date: /home/arrgusr/ROS2Dev/D_Mecatronico/install/arm_description/share/arm_description/cmake/arm_descriptionConfig-version.cmake
+[0.704s] -- Up-to-date: /home/arrgusr/ROS2Dev/D_Mecatronico/install/arm_description/share/arm_description/package.xml
+[0.705s] Invoked command in '/home/arrgusr/ROS2Dev/D_Mecatronico/build/arm_description' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --install /home/arrgusr/ROS2Dev/D_Mecatronico/build/arm_description

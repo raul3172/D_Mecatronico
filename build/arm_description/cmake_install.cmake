@@ -53,7 +53,10 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/arm_description" TYPE PROGRAM FILES "/home/arrgusr/ROS2Dev/D_Mecatronico/src/arm_description/scripts/teach_repeat.py")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/arm_description" TYPE PROGRAM FILES
+    "/home/arrgusr/ROS2Dev/D_Mecatronico/src/arm_description/scripts/teach_repeat.py"
+    "/home/arrgusr/ROS2Dev/D_Mecatronico/src/arm_description/scripts/teach_pendant_gui.py"
+    )
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
