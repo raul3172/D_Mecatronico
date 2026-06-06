@@ -17,6 +17,7 @@ install(DIRECTORY
   launch
   rviz
   config
+  scripts
   DESTINATION share/${PROJECT_NAME}
 )
 
@@ -35,6 +36,7 @@ endif()
 install(PROGRAMS
   scripts/teach_repeat.py
   scripts/teach_pendant_gui.py
+  scripts/serial_bridge.py
   DESTINATION lib/${PROJECT_NAME}
 )
 

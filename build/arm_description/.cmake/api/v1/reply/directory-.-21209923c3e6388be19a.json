@@ -42,13 +42,13 @@
 			{
 				"command" : 0,
 				"file" : 0,
-				"line" : 35,
+				"line" : 36,
 				"parent" : 0
 			},
 			{
 				"command" : 5,
 				"file" : 0,
-				"line" : 41,
+				"line" : 43,
 				"parent" : 0
 			},
 			{
@@ -239,7 +239,8 @@
 				"meshes",
 				"launch",
 				"rviz",
-				"config"
+				"config",
+				"scripts"
 			],
 			"type" : "directory"
 		},
@@ -250,7 +251,8 @@
 			"paths" : 
 			[
 				"scripts/teach_repeat.py",
-				"scripts/teach_pendant_gui.py"
+				"scripts/teach_pendant_gui.py",
+				"scripts/serial_bridge.py"
 			],
 			"type" : "file"
 		},

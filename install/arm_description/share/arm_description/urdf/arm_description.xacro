@@ -372,7 +372,7 @@
     <parent link="brazo_gripper" />
     <child  link="gripper" />
     <axis xyz="0 0 1" />
-    <limit lower="0.0" upper="1.0" effort="2" velocity="3.0" />
+    <limit lower="0.0" upper="6.2831" effort="2" velocity="3.0" />
   </joint>
 
   <!-- ═══════════════════════════════════════════════════════════════
