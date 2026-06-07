@@ -29,7 +29,7 @@ JOINT_DEFS = [
     (2, 'Hombro ', 'disco_soportes_rotacion',  -2.094,  2.094, 'rad', 0.050),
     (3, 'Codo   ', 'brazo_motores',            -2.094,  2.094, 'rad', 0.050),
     (4, 'Muñeca ', 'brazo_gripper_azul',       -2.094,  2.094, 'rad', 0.050),
-    (5, 'Gripper', 'griper_mecanismo',          0.000,  1.000, 'rad', 0.050),
+    (5, 'Gripper', 'gripper_mecanismo',          0.000,  1.000, 'rad', 0.050),
 ]
 
 ARM_JOINTS    = [d[2] for d in JOINT_DEFS[:4]]
