@@ -440,11 +440,11 @@
       <!-- URDF puro no admite xacro:if, usa el launch para elegir -->
       <!-- Para producción descomenta solo UNO de los dos bloques: -->
 
-      <!-- ── OPCIÓN A: Mock Hardware (pruebas con real_robot.launch) ── 
+      <!-- ── OPCIÓN A: Mock Hardware (pruebas con real_robot.launch) ── -->
       <plugin>mock_components/GenericSystem</plugin>
-      -->
-      <!-- ── OPCIÓN B: Gazebo (descomenta y comenta la opción A) ────── -->
-      <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+
+      <!-- ── OPCIÓN B: Gazebo (descomenta y comenta la opción A) ────── 
+      <plugin>gz_ros2_control/GazeboSimSystem</plugin>-->
       
     </hardware>
 
