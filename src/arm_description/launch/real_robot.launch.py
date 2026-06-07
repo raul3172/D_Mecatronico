@@ -38,7 +38,7 @@ PACKAGE = 'arm_description'
 def generate_launch_description():
 
     pkg_share   = FindPackageShare(PACKAGE)
-    urdf_file   = PathJoinSubstitution([pkg_share, 'urdf',   'Diseño_Final_Brazo_carro_5.urdf'])
+    urdf_file   = PathJoinSubstitution([pkg_share, 'urdf',   'arm_description.xacro'])
     ctrl_yaml   = PathJoinSubstitution([pkg_share, 'config', 'arm_controllers.yaml'])
     bridge_exec = PathJoinSubstitution([pkg_share, 'scripts', 'serial_bridge.py'])
 
