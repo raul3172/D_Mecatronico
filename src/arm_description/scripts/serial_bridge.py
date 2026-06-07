@@ -33,7 +33,7 @@ JOINT_NAMES = [
 
 PUERTO_SERIAL = '/dev/ttyUSB0'
 BAUDRATE      = 115200
-FREQ_HZ       = 50          # Hz de envío al ESP32
+FREQ_HZ       = 10          # Hz de envío al ESP32
 LOG_CADA      = 50          # imprime trama cada N ciclos para no saturar terminal
 
 
@@ -60,7 +60,7 @@ class SerialBridge(Node):
         # Hilo lector de respuestas del ESP32 (daemon)
         threading.Thread(target=self._read_loop, daemon=True).start()
 
-        # Timer de envío a 50 Hz
+        # Timer de envío a 10 Hz
         self.timer = self.create_timer(1.0 / FREQ_HZ, self._enviar_trama)
 
         self.get_logger().info(
