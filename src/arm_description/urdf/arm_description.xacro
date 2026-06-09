@@ -442,10 +442,10 @@
 
       <!-- ── OPCIÓN A: Mock Hardware (pruebas con real_robot.launch) ── -->
       <plugin>mock_components/GenericSystem</plugin>
-
-      <!-- ── OPCIÓN B: Gazebo (descomenta y comenta la opción A) ────── 
-      <plugin>gz_ros2_control/GazeboSimSystem</plugin>-->
       
+      <!-- ── OPCIÓN B: Gazebo (descomenta y comenta la opción A) ────── 
+      <plugin>gz_ros2_control/GazeboSimSystem</plugin> 
+      -->
     </hardware>
 
     <!-- Riel lineal -->
