@@ -8,21 +8,21 @@ con el nombre que publica /joint_states.
 Flujo:
   /joint_states → construye <V1,V2,V3,V4,V5> → ESP32 (50 Hz)
   ESP32 → respuesta serial → /esp32/feedback (publica cada línea recibida)
+
+Buffer dinámico en _read_loop: acumula bytes hasta encontrar '\n'
+manualmente, evitando la pérdida del primer byte que ocurre con readline()
+cuando el timer de escritura y la lectura coinciden.
 """
 
 import time
 import threading
-
 import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import JointState
 from std_msgs.msg import String
 import serial
 
-
 # ── Orden ESTRICTO que espera el ESP32 ───────────────────────────
-# Asegúrate de que coincide exactamente con los joint_names
-# que publica /joint_states en tu sistema.
 JOINT_NAMES = [
     'moviento_en_x',            # V1 — riel lineal
     'disco_soportes_rotacion',  # V2 — hombro
@@ -50,9 +50,7 @@ class SerialBridge(Node):
         self.feedback_pub = self.create_publisher(String, '/esp32/feedback', 10)
 
         # Suscriptor de /joint_states
-        self.sub = self.create_subscription(
-            JointState, '/joint_states', self._state_cb, 10
-        )
+        self.sub = self.create_subscription(JointState, '/joint_states', self._state_cb, 10)
 
         # Conectar al ESP32
         self._conectar()
@@ -60,7 +58,7 @@ class SerialBridge(Node):
         # Hilo lector de respuestas del ESP32 (daemon)
         threading.Thread(target=self._read_loop, daemon=True).start()
 
-        # Timer de envío a 300 Hz
+        # Timer de envío a FREQ_HZ
         self.timer = self.create_timer(1.0 / FREQ_HZ, self._enviar_trama)
 
         self.get_logger().info(
@@ -73,9 +71,7 @@ class SerialBridge(Node):
             if self.esp32 and self.esp32.is_open:
                 self.esp32.close()
             self.esp32 = serial.Serial(PUERTO_SERIAL, BAUDRATE, timeout=0.1)
-            self.get_logger().info(
-                f'✅ ENLACE ESTABLECIDO: ESP32 en {PUERTO_SERIAL} a {BAUDRATE} baud'
-            )
+            self.get_logger().info(f'✅ ENLACE ESTABLECIDO: ESP32 en {PUERTO_SERIAL} a {BAUDRATE} baud')
         except serial.SerialException:
             if self._reconx % 50 == 0:
                 self.get_logger().error(
@@ -119,21 +115,29 @@ class SerialBridge(Node):
                 f'gripper={p[4]:.3f}rad'
             )
 
-    # ── Lector de respuestas del ESP32 ───────────────────────────
+    # ── Lector de respuestas del ESP32 (buffer dinámico) ─────────
+    # No usa readline() porque puede cortar el primer byte cuando el
+    # timer de escritura y la lectura coinciden en el mismo instante.
+    # Acumula bytes en _buf hasta encontrar '\n' manualmente.
     def _read_loop(self) -> None:
+        _buf = ""
         while rclpy.ok():
             if self.esp32 and self.esp32.is_open:
                 try:
-                    raw = self.esp32.readline()
-                    if raw:
-                        text = raw.decode('utf-8', errors='replace').strip()
-                        if text:
-                            self.get_logger().info(f'📩 [ESP32→RPi] {text}')
-                            msg = String()
-                            msg.data = text
-                            self.feedback_pub.publish(msg)
+                    waiting = self.esp32.in_waiting
+                    if waiting:
+                        _buf += self.esp32.read(waiting).decode('utf-8', errors='replace')
+                        # Procesar todas las líneas completas del buffer
+                        while '\n' in _buf:
+                            linea, _buf = _buf.split('\n', 1)
+                            text = linea.strip()
+                            if text:
+                                self.get_logger().info(f'📩 [ESP32→RPi] {text}')
+                                msg = String()
+                                msg.data = text
+                                self.feedback_pub.publish(msg)
                 except serial.SerialException:
-                    pass
+                    _buf = ""  # limpiar buffer al perder conexión
                 except Exception as exc:
                     self.get_logger().debug(f'Read error: {exc}')
             time.sleep(0.005)
@@ -150,7 +154,7 @@ def main(args=None):
     finally:
         if node.esp32 and node.esp32.is_open:
             node.esp32.close()
-            node.get_logger().info('🔌 Puerto serial cerrado limpiamente.')
+        node.get_logger().info('🔌 Puerto serial cerrado limpiamente.')
         node.destroy_node()
         rclpy.shutdown()
 
