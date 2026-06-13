@@ -24,7 +24,7 @@ controller_manager:
 arm_controller:
   ros__parameters:
     joints:
-      - moviento_en_x           # Riel lineal  [0 → 0.30 m]
+      - moviento_en_x           # Riel lineal  [0 → 46 cm]
       - disco_soportes_rotacion # Hombro       [±2.094 rad]
       - brazo_motores           # Codo         [±2.094 rad]
       - brazo_gripper_azul      # Muñeca       [±2.094 rad]

@@ -33,7 +33,7 @@ JOINT_NAMES = [
 
 PUERTO_SERIAL = '/dev/ttyUSB0'
 BAUDRATE      = 115200
-FREQ_HZ       = 300          # Hz de envío al ESP32
+FREQ_HZ       = 50          # Hz de envío al ESP32
 LOG_CADA      = 50          # imprime trama cada N ciclos para no saturar terminal
 
 

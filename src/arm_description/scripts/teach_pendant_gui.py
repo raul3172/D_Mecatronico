@@ -267,7 +267,7 @@ class TeachPendantGUI(QWidget):
         
         gb_grip = QGroupBox("Efector Final (Gripper)")
         lay_grip = QHBoxLayout(gb_grip)
-        for text, color, deg in [("Abierto (80°)", "#e74c3c", 80), ("Pelota (77°)", "#3498db", 77), ("Matraz (31°)", "#9b59b6", 31)]:
+        for text, color, deg in [("Abierto (241°)", "#e74c3c", 241), ("Pelota (164°)", "#3498db", 164), ("Matraz (210°)", "#9b59b6", 210)]:
             btn = QPushButton(text)
             btn.setStyleSheet(f"background:{color}; color:white; height:35px; font-weight:bold;")
             btn.clicked.connect(lambda _, d=deg: self._set_gripper_preset(d))
