@@ -41,6 +41,7 @@ class TeachAndRepeatNode(Node):
         self._pos_map: dict     = {j: 0.0 for j in ALL_JOINTS}
         self.waypoints: list    = []
         self.last_feedback: str = ''
+        self.is_calibrated: bool = False
 
     def _state_cb(self, msg):
         for name, pos in zip(msg.name, msg.position):
@@ -49,6 +50,8 @@ class TeachAndRepeatNode(Node):
 
     def _fb_cb(self, msg):
         self.last_feedback = msg.data
+        if "CALIBRADO" in msg.data:       # <--- AÑADE ESTA LÍNEA
+            self.is_calibrated = True
 
     @property
     def current_pos(self):
@@ -157,10 +160,10 @@ class CalibrationDialog(QDialog):
 
     def _advance(self):
         if self._step > 0 and self.STEPS[self._step - 1][2]:
-            if "CALIBRADO" not in self.node.last_feedback:
+            if not self.node.is_calibrated:                 # <--- CAMBIA ESTO
                 QTimer.singleShot(200, self._advance); return
             else:
-                self.node.last_feedback = ""
+                self.node.is_calibrated = False             # <--- CAMBIA ESTO
 
         if self._step >= len(self.STEPS):
             self._fb_timer.stop(); self.close(); return
