@@ -2,11 +2,11 @@
 ## Diseño Mecatrónico
 ### Brazo Robótico de 3 GDL + Gripper + Base Lineal con Motor a Pasos — Operado en ROS 2
 Diseñado y ensamblado por: 
-Fuentes Yañez Ivan
-Garduño Cruz Ingrid Paola
-Huarancca Panana Irvin Daymont
-López Cruz Marino
-Ortíz Martínez Raúl
+-Fuentes Yañez Ivan
+-Garduño Cruz Ingrid Paola
+-Huarancca Panana Irvin Daymont
+-López Cruz Marino
+-Ortíz Martínez Raúl
 
 ---
 
