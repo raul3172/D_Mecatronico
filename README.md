@@ -1,6 +1,6 @@
 # Universidad Autónoma de México — Facultad de Ingeniería
 ## Diseño Mecatrónico
-### Brazo Robótico de 3 GDL + Gripper + Base Lineal con Motor a Pasos — Operado en ROS 2
+### Brazo Robótico de 4 GDL + Gripper + Base Lineal con Motor a Pasos — Operado en ROS 2
 Diseñado y ensamblado por: 
 -Fuentes Yañez Ivan
 -Garduño Cruz Ingrid Paola
